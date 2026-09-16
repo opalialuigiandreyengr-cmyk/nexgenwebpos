@@ -67,23 +67,10 @@ def create_app():
     login_manager.login_message_category = 'info'
     login_manager.init_app(app)
 
-    _USER_CACHE = {}
-    _USER_CACHE_TTL = 60.0
-
     @login_manager.user_loader
     def load_user(user_id):
         try:
-            import time
-            uid = int(user_id)
-            now = time.time()
-            if uid in _USER_CACHE:
-                cached_user, ts = _USER_CACHE[uid]
-                if now - ts < _USER_CACHE_TTL:
-                    return cached_user
-            user = User.query.get(uid)
-            if user:
-                _USER_CACHE[uid] = (user, now)
-            return user
+            return User.query.get(int(user_id))
         except Exception:
             return None
 
