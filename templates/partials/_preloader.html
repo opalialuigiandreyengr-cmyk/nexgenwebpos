@@ -1,0 +1,86 @@
+<!-- Production-Grade Restaurant & Beverage Startup Preloader -->
+<script>
+  (function() {
+    try {
+      if (sessionStorage.getItem('splash_shown') === '1') {
+        document.write('<style>#app-splash-loader { display: none !important; }</style>');
+      }
+    } catch(e) {}
+  })();
+</script>
+<div id="app-splash-loader" class="app-splash-loader" aria-hidden="true">
+  <div class="fb-splash-content">
+    <!-- Dominant Culinary Graphic Stage -->
+    <div class="fb-pan-stage-wrap">
+      <!-- Deep Ambient Heat Glow Aura -->
+      <div class="fb-heat-aura"></div>
+      
+      <!-- Ascending Steam Vapor -->
+      <div class="fb-steam-container">
+        <svg class="fb-steam-svg" viewBox="0 0 130 90" fill="none">
+          <path class="fb-steam-path fb-sp-1" d="M35 85 Q 20 50 38 28 T 30 2" stroke="url(#steamGrad)" stroke-width="5" stroke-linecap="round"/>
+          <path class="fb-steam-path fb-sp-2" d="M65 88 Q 84 52 56 30 T 66 2" stroke="url(#steamGrad)" stroke-width="5.5" stroke-linecap="round"/>
+          <path class="fb-steam-path fb-sp-3" d="M95 85 Q 76 50 98 28 T 90 2" stroke="url(#steamGrad)" stroke-width="5.5" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="steamGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.95"/>
+              <stop offset="45%" stop-color="#06b6d4" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Sizzling Chef Skillet & Flipping Dish -->
+      <div class="fb-pan-assembly">
+        <!-- Big Flipping Food Item -->
+        <div class="fb-flipping-food" id="fb-flipping-food">
+          <span class="fb-food-icon" id="fb-food-icon">🍔</span>
+        </div>
+
+        <!-- Large Chef's Skillet SVG -->
+        <svg class="fb-pan-svg" viewBox="0 0 190 90" fill="none">
+          <!-- Pan Base -->
+          <path d="M32 40 C32 60 52 74 88 74 C124 74 144 60 144 40 L136 40 C136 56 118 66 88 66 C58 66 40 56 40 40 Z" fill="#334155"/>
+          <!-- Inner Pan Lip & Base -->
+          <ellipse cx="88" cy="40" rx="56" ry="17" fill="#1e293b" stroke="#64748b" stroke-width="2.4"/>
+          <ellipse cx="88" cy="41" rx="46" ry="12" fill="#0f172a"/>
+          <!-- Sizzle Sparks inside pan -->
+          <circle cx="72" cy="42" r="2.2" fill="#f59e0b" class="fb-sizzle-dot fb-sz-1"/>
+          <circle cx="100" cy="43" r="2.6" fill="#06b6d4" class="fb-sizzle-dot fb-sz-2"/>
+          <circle cx="86" cy="47" r="1.8" fill="#f59e0b" class="fb-sizzle-dot fb-sz-3"/>
+          <!-- Ergonomic Pan Handle -->
+          <path d="M142 40 L180 30 C183 29 186 31 184 34 L148 48 Z" fill="#64748b"/>
+          <rect x="156" y="28" width="22" height="10" rx="4.5" transform="rotate(-16 156 28)" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Integrated Brand Identity with Logo -->
+    <div class="fb-brand-header">
+      <div class="fb-logo-wrap">
+        <img src="{{ asset('box_logo.png') }}" alt="NEXGEN" class="fb-brand-logo" onerror="this.style.display='none';">
+      </div>
+      <div class="fb-brand-title">NEXGEN POS</div>
+    </div>
+
+    <div class="fb-pill-tag">
+      <span class="fb-live-dot"></span>
+      <span>RESTAURANT &amp; POINT OF SALE</span>
+    </div>
+
+    <!-- Refined Real-Time Status Text -->
+    <div class="fb-status-text" id="fb-status-caption">Initializing POS terminal &amp; peripheral stations...</div>
+    
+    <!-- Responsive Progress Bar -->
+    <div class="fb-progress-box">
+      <div class="fb-progress-track">
+        <div class="fb-progress-bar" id="fb-progress-fill" style="width: 0%;"></div>
+      </div>
+      <div class="fb-progress-meta">
+        <span class="fb-pct" id="fb-progress-pct">0%</span>
+        <span class="fb-timer" id="fb-timer-sec">10s remaining</span>
+      </div>
+    </div>
+  </div>
+</div>

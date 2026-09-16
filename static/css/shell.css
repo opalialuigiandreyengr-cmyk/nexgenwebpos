@@ -1,0 +1,1060 @@
+/* =============================================================================
+   shell.css — SPA shell layout only (tokens-only, no hard-coded colors)
+   -----------------------------------------------------------------------------
+   Loaded by shell.html after njx.min.css + tokens.css. Everything here is
+   the persistent parent frame: skip link, always-dark sidebar (rail-
+   capable), slim topbar (collapse toggle + view title + theme + user chip),
+   view outlet, footer and the toast host. Page layout lives in
+   admin/<page>.css / pos/<page>.css.
+
+   Sidebar state: body[data-side-nav]="expanded|rail" is set by core/spa.js
+   (localStorage posSideNav, default: rail below 1280px). Before JS runs the
+   media block below supplies the same rail default, so a narrow screen never
+   flashes the full sidebar.
+   ========================================================================== */
+
+/* Instant Navigation & Query Progress Bar */
+.spa-top-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981, #3b82f6);
+  background-size: 200% 100%;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 4px rgba(16, 185, 129, 0.5);
+  z-index: 999999;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease-out, opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.spa-top-loader.loading {
+  opacity: 1;
+  transform: translateX(-25%);
+  animation: spaLoaderGradient 1.5s linear infinite, spaLoaderPulse 1.8s ease-in-out infinite alternate;
+}
+
+.spa-top-loader.done {
+  opacity: 0;
+  transform: translateX(0%);
+  transition: transform 0.15s ease-out, opacity 0.25s ease 0.1s;
+}
+
+@keyframes spaLoaderGradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes spaLoaderPulse {
+  0% { transform: translateX(-35%); }
+  50% { transform: translateX(-15%); }
+  100% { transform: translateX(-5%); }
+}
+
+/* =============================================================================
+   Branded Food & Beverage Startup Splash Preloader (F&B Edition)
+   ========================================================================== */
+.app-splash-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 40%, #171d2c 0%, #090d16 100%);
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+}
+
+.app-splash-loader.splash-hide {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+/* Free, unboxed container floating directly in the viewport */
+.fb-splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0 auto;
+}
+
+/* Dominant Hero Culinary Graphic Stage */
+.fb-pan-stage-wrap {
+  position: relative;
+  width: 320px;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.fb-heat-aura {
+  position: absolute;
+  width: 220px;
+  height: 70px;
+  bottom: 14px;
+  left: 36px;
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.6) 0%, rgba(6, 182, 212, 0.25) 50%, transparent 80%);
+  filter: blur(20px);
+  animation: heatPulse 1.8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes heatPulse {
+  0% { transform: scale(0.85); opacity: 0.45; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Ascending Vapor & Steam */
+.fb-steam-container {
+  position: absolute;
+  top: -24px;
+  left: 78px;
+  width: 130px;
+  height: 95px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.fb-steam-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fb-steam-path {
+  stroke-dasharray: 28 12;
+  animation: steamDrift 2.2s linear infinite;
+}
+
+.fb-sp-1 { animation-delay: 0.0s; }
+.fb-sp-2 { animation-delay: 0.6s; }
+.fb-sp-3 { animation-delay: 1.2s; }
+
+@keyframes steamDrift {
+  0% {
+    stroke-dashoffset: 40;
+    opacity: 0;
+    transform: translateY(12px) scaleX(0.85);
+  }
+  40% {
+    opacity: 0.95;
+  }
+  100% {
+    stroke-dashoffset: -40;
+    opacity: 0;
+    transform: translateY(-28px) scaleX(1.4);
+  }
+}
+
+/* Large Chef Skillet Assembly & Physics */
+.fb-pan-assembly {
+  position: relative;
+  width: 255px;
+  height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: panSizzleWobble 1.8s ease-in-out infinite;
+}
+
+.fb-pan-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@keyframes panSizzleWobble {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-2.5deg) translateY(-4px); }
+  60% { transform: rotate(2deg) translateY(2px); }
+  75% { transform: rotate(-1.5deg) translateY(-2px); }
+}
+
+/* Big Flipping Culinary Item with Physics */
+.fb-flipping-food {
+  position: absolute;
+  top: 2px;
+  left: 92px;
+  font-size: 3.8rem;
+  z-index: 5;
+  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.7));
+  animation: foodFlipPhysics 1.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+@keyframes foodFlipPhysics {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-82px) scale(1.28) rotate(180deg);
+  }
+  70% {
+    transform: translateY(-14px) scale(0.95) rotate(360deg);
+  }
+  85% {
+    transform: translateY(4px) scale(1.1, 0.88) rotate(360deg);
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(360deg);
+  }
+}
+
+/* Sizzle micro dots */
+.fb-sizzle-dot {
+  animation: sizzlePop 0.8s ease-in-out infinite alternate;
+}
+.fb-sz-1 { animation-delay: 0.1s; }
+.fb-sz-2 { animation-delay: 0.4s; }
+.fb-sz-3 { animation-delay: 0.7s; }
+
+@keyframes sizzlePop {
+  0% { transform: scale(0.8); opacity: 0.4; }
+  100% { transform: scale(1.8); opacity: 1; filter: drop-shadow(0 0 6px #f59e0b); }
+}
+
+/* Brand Identity Header with Logo */
+.fb-brand-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 0.65rem;
+}
+
+.fb-logo-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  box-shadow: 0 0 22px rgba(6, 182, 212, 0.3);
+}
+
+.fb-brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.fb-brand-title {
+  font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  background: linear-gradient(135deg, #ffffff 40%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.fb-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.28rem 0.95rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #f59e0b;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.1);
+}
+
+.fb-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: liveDotPulse 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes liveDotPulse {
+  0% { opacity: 0.5; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.25); }
+}
+
+.fb-status-text {
+  font-size: 0.94rem;
+  color: #cbd5e1;
+  min-height: 40px;
+  margin-bottom: 1.35rem;
+  font-weight: 500;
+  line-height: 1.45;
+  max-width: 480px;
+  transition: opacity 0.3s ease;
+}
+
+/* 20s Responsive Progress Box */
+.fb-progress-box {
+  width: 100%;
+  max-width: 440px;
+}
+
+.fb-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.fb-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #06b6d4, #10b981);
+  border-radius: 8px;
+  transition: width 0.2s linear;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.75);
+}
+
+.fb-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.fb-pct {
+  color: #06b6d4;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-heading, monospace);
+  font-weight: 800;
+  font-size: 1.05em;
+}
+
+.fb-timer {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-heading, monospace);
+}
+
+/* =============================================================================
+   YouTube-Style Smooth Skeleton Shimmer System
+   ========================================================================== */
+@keyframes ytSkeletonSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-elev, #1e293b) !important;
+  border-radius: var(--radius-sm, 6px);
+  pointer-events: none;
+  user-select: none;
+  display: inline-block;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: ytSkeletonSweep 2.0s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Light theme YouTube shimmer */
+[data-theme="light"] .skeleton-shimmer {
+  background-color: #e5e7eb !important;
+}
+
+[data-theme="light"] .skeleton-shimmer::after {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.75) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.skeleton-line {
+  display: inline-block;
+  height: 14px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.skeleton-pill {
+  display: inline-block;
+  height: 22px;
+  border-radius: 12px;
+  vertical-align: middle;
+}
+
+.skeleton-box {
+  display: block;
+  border-radius: var(--radius-md, 8px);
+}
+
+/* Table skeleton rows */
+.table-skeleton-row td {
+  padding: 1rem 0.75rem !important;
+}
+
+/* Card / KPI Pulsing Loading State */
+.is-kpi-loading {
+  position: relative;
+  overflow: hidden;
+}
+.is-kpi-loading::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary, #06b6d4) 12%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmerWave 1.2s infinite;
+  pointer-events: none;
+}
+
+/* Button Loading State */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.btn-loading .btn-text {
+  visibility: hidden;
+}
+.btn-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btnSpin 0.6s linear infinite;
+}
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Skip link — visually hidden until focused (WCAG 2.4.1) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9600;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 var(--radius-md, 8px) 0;
+  background: var(--color-primary);
+  color: var(--color-light);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Shell frame — sidebar (sticky) / main column (topbar + outlet + footer) */
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+/* --- Sidebar ---------------------------------------------------------------
+   Modern dark aesthetics with high contrast, crisp typography, and responsive rail support. */
+.shell-side {
+  --side-bg: #090d16;
+  --side-border: #1e293b;
+  --side-text: #94a3b8;
+  --side-text-hover: #ffffff;
+  --side-accent: #f59e0b;
+  --side-w: 240px;
+
+  width: var(--side-w);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--side-bg);
+  border-right: 1px solid var(--side-border);
+  z-index: 900;
+  transition: width var(--dur-base, 0.2s) var(--ease-out, ease);
+  display: flex;
+  flex-direction: column;
+}
+
+.side-nav-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Brand Lockup */
+.side-brand {
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.side-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.side-brand-logo {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px;
+}
+
+.side-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.side-brand-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.side-brand-subtitle {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f59e0b !important;
+  text-transform: uppercase;
+  margin-top: 2px;
+  text-decoration: none !important;
+}
+
+/* Scrollable Menu Area */
+.side-menu {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.side-menu::-webkit-scrollbar {
+  width: 4px;
+}
+.side-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.side-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.side-group-caption {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748b;
+  padding: 4px 10px 6px;
+  user-select: none;
+}
+
+.side-group-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.side-item {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+
+.side-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #94a3b8;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.side-link-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.side-link-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-link:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(2px);
+}
+
+.side-link:hover .side-link-icon {
+  color: #f1f5f9;
+}
+
+.side-link.is-active {
+  color: #ffffff !important;
+  background: rgba(245, 158, 11, 0.12);
+  border-left-color: #f59e0b;
+  font-weight: 600;
+}
+
+.side-link.is-active .side-link-icon {
+  color: #f59e0b;
+}
+
+/* User Footer */
+.side-footer {
+  padding: 12px 14px;
+  border-top: 1px solid var(--side-border);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.side-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.side-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+.side-user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.side-user-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-user-role {
+  font-size: 9px;
+  font-weight: 700;
+  color: #f59e0b;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.side-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.side-logout-btn:hover {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* --- Rail state (collapsed) ------------------------------------------------ */
+body[data-side-nav="rail"] .shell-side {
+  --side-w: 64px;
+}
+body[data-side-nav="rail"] .side-brand-text,
+body[data-side-nav="rail"] .side-group-caption,
+body[data-side-nav="rail"] .side-link-label,
+body[data-side-nav="rail"] .side-user-info {
+  display: none !important;
+}
+body[data-side-nav="rail"] .side-brand {
+  padding: 16px 0 14px;
+  display: flex;
+  justify-content: center;
+}
+body[data-side-nav="rail"] .side-link {
+  justify-content: center;
+  padding: 10px 0;
+  border-left: none;
+  border-bottom: 2px solid transparent;
+}
+body[data-side-nav="rail"] .side-link.is-active {
+  border-bottom-color: #f59e0b;
+}
+body[data-side-nav="rail"] .side-footer {
+  padding: 12px 0;
+  justify-content: center;
+}
+body[data-side-nav="rail"] .side-user-chip {
+  justify-content: center;
+}
+body[data-side-nav="rail"] .side-logout-btn {
+  display: none;
+}
+
+/* --- Main column: topbar / outlet / footer -------------------------------- */
+.shell-main {
+  min-width: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--color-border, var(--nav-border));
+  box-shadow: var(--shadow-sm);
+}
+.shell-topbar-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-main);
+}
+.shell-topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Collapse toggle icon: chevron-left when expanded, menu when rail */
+.shell-topbar [data-side-toggle] .icon-menu {
+  display: none;
+}
+body[data-side-nav="rail"] .shell-topbar [data-side-toggle] .icon-menu {
+  display: block;
+}
+body[data-side-nav="rail"] .shell-topbar [data-side-toggle] .icon-chevron-left {
+  display: none;
+}
+
+/* Child-view outlet — swapped in-place by htmx; focusable for a11y */
+#view-root {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  outline: none;
+}
+/* Suppress the focus ring on the heading that spa.js focuses for a11y
+   (tabindex="-1" + programmatic focus). The ring is only useful on
+   user-initiated focus (keyboard tab), not on page-load focus. */
+#view-root h1:focus,
+#view-root h2:focus {
+  outline: none;
+}
+/* POS area goes full-width (tactical screens: keypad, cart, floor plan) */
+:root[data-area="pos"] #view-root {
+  max-width: none;
+  padding: 1rem;
+}
+
+.shell-footer {
+  padding: 0.9rem 1.25rem 1.1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  border-top: 1px solid var(--nav-border);
+}
+
+/* Toast host — pre-rendered by the shell; core/toast.js appends pills here */
+#toast-host {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+#toast-host .toast,
+.toast {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  padding: 0.65rem 1rem !important;
+  border-radius: 6px !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  max-width: 420px !important;
+}
+
+#toast-host .toast .toast-message,
+.toast .toast-message {
+  color: #ffffff !important;
+}
+
+#toast-host .toast-success,
+.toast-success {
+  background: #064e3b !important;
+  border: 1px solid #059669 !important;
+  color: #ffffff !important;
+}
+
+#toast-host .toast-error,
+.toast-error {
+  background: #7f1d1d !important;
+  border: 1px solid #dc2626 !important;
+  color: #ffffff !important;
+}
+
+#toast-host .toast-warning,
+.toast-warning {
+  background: #78350f !important;
+  border: 1px solid #d97706 !important;
+  color: #ffffff !important;
+}
+
+#toast-host .toast-primary,
+.toast-primary,
+#toast-host .toast-info,
+.toast-info {
+  background: #1e293b !important;
+  border: 1px solid #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* User chip — summary row lays out avatar + name + caret horizontally */
+.shell-topbar .dropdown {
+  position: relative;
+}
+.shell-user-chip {
+  cursor: pointer;
+  list-style: none; /* hide the <details> disclosure marker */
+  user-select: none;
+}
+.shell-user-chip::-webkit-details-marker {
+  display: none;
+}
+.shell-user-chip > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-md, 8px);
+  color: var(--nav-text);
+  white-space: nowrap;
+  transition: color 0.18s, background 0.18s;
+}
+.shell-user-chip > summary:hover {
+  color: var(--nav-text-hover);
+  background: color-mix(in srgb, var(--color-neutral-600) 10%, transparent);
+}
+.shell-user-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.shell-user-role {
+  margin-bottom: 4px;
+  padding: 6px 10px 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--nav-border);
+}
+.shell-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1; /* optically center the initial (no extra glyph line box) */
+  color: var(--color-light);
+  background: var(--color-primary);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-light) 22%, transparent);
+  flex-shrink: 0;
+}
+
+/* Theme toggle icon button (lives in the always-light-adaptive topbar) */
+.shell-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.18s, background 0.18s;
+}
+.shell-icon-btn:hover {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--color-neutral-600) 10%, transparent);
+}
+[data-theme="light"] .shell-icon-btn .icon-moon {
+  display: none;
+}
+[data-theme="dark"] .shell-icon-btn .icon-sun {
+  display: none;
+}
+
+/* --- View transition animation (Linear / Vercel style) -------------------
+   When navigating between SPA pages, the incoming view smoothly lifts
+   upwards by 6px while fading in cleanly with crisp ease-out physics.
+   ---------------------------------------------------------------------- */
+#view-root {
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+@keyframes view-lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#view-root.view-leaving {
+  opacity: 0;
+  transition: opacity 0.08s ease-in;
+}
+
+#view-root.view-entering {
+  animation: view-lift-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

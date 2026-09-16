@@ -1,0 +1,297 @@
+{# ============================================================================
+   settings.html — NEXGEN Web POS Store, Receipt & Theme Settings
+   ============================================================================ #}
+{% extends 'shell.html' %}
+{% from 'partials/_icons.html' import icon %}
+{% block title %}Settings - NEXGEN POS Admin{% endblock %}
+{% block area %}admin{% endblock %}
+{% block page_module %}settings{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ asset('css/pages/settings.css') }}">
+
+<h1 class="sr-only">Store &amp; System Settings</h1>
+
+<div class="settings-page" id="settingsPageRoot">
+  {# ── Settings Navigation Tabs ──────────────────────────────────────── #}
+  <div class="settings-tab-nav" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+    <button type="button" class="settings-tab-btn active" data-tab-target="store" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: 1px solid transparent; background: var(--bg-surface-elevated, #2563eb); color: #fff;">
+      {{ icon('box', 16) }}
+      <span>Store &amp; Operations</span>
+    </button>
+    <button type="button" class="settings-tab-btn" data-tab-target="receipt" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted);">
+      {{ icon('receipt', 16) }}
+      <span>Receipt &amp; Tax Info</span>
+    </button>
+    <button type="button" class="settings-tab-btn" data-tab-target="theme" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted);">
+      {{ icon('sun', 16) }}
+      <span>Appearance &amp; Theme</span>
+    </button>
+  </div>
+
+  {# ── Body Layout with Main Content Panes ───────────────────────────── #}
+  <div class="settings-body-layout">
+    <main class="settings-main-content">
+
+      {# ── Pane 1: Store Settings & Operating Parameters ──────────────────── #}
+      <div class="settings-pane active" id="pane-store" role="tabpanel">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div>
+              <h3 class="settings-card-title">{{ icon('box', 18) }} Business Profile &amp; Operations</h3>
+              <p class="settings-card-desc">Configure business category, operating schedule, service types, and accepted payment modes.</p>
+            </div>
+          </div>
+          <form id="storeSettingsForm" style="display: flex; flex-direction: column; gap: 1.15rem;">
+            <div class="settings-form-grid">
+              <div class="settings-field">
+                <label class="settings-label" for="ssBusinessType">Business Type</label>
+                <select class="settings-select" id="ssBusinessType" name="business_type">
+                  <option value="">Select business type...</option>
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Kiosk">Kiosk</option>
+                  <option value="Fast Food">Fast Food</option>
+                  <option value="Cafe">Cafe</option>
+                  <option value="Bakery">Bakery</option>
+                  <option value="Food Truck">Food Truck</option>
+                  <option value="Bar">Bar</option>
+                  <option value="Eatery">Eatery</option>
+                  <option value="Dessert Shop">Dessert Shop</option>
+                  <option value="Tea House">Tea House</option>
+                  <option value="Buffet">Buffet</option>
+                </select>
+              </div>
+              <div class="settings-field">
+                <label class="settings-label">Operating Hours</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <input type="time" class="settings-input" id="ssOpenTime" name="open_time" title="Opening Time">
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">to</span>
+                  <input type="time" class="settings-input" id="ssCloseTime" name="close_time" title="Closing Time">
+                </div>
+              </div>
+              <div class="settings-field field-full">
+                <label class="settings-label">Business Days <span class="settings-label-note">(click to toggle active operating days)</span></label>
+                <div class="settings-chip-row" id="ssBusinessDays">
+                  <button type="button" class="settings-chip" data-value="Monday">Mon</button>
+                  <button type="button" class="settings-chip" data-value="Tuesday">Tue</button>
+                  <button type="button" class="settings-chip" data-value="Wednesday">Wed</button>
+                  <button type="button" class="settings-chip" data-value="Thursday">Thu</button>
+                  <button type="button" class="settings-chip" data-value="Friday">Fri</button>
+                  <button type="button" class="settings-chip" data-value="Saturday">Sat</button>
+                  <button type="button" class="settings-chip" data-value="Sunday">Sun</button>
+                </div>
+              </div>
+              <div class="settings-field field-full">
+                <label class="settings-label">Service Types <span class="settings-label-note">(select supported order channels)</span></label>
+                <div class="settings-chip-row" id="ssServiceTypes">
+                  <button type="button" class="settings-chip" data-value="Dine-in">Dine-in</button>
+                  <button type="button" class="settings-chip" data-value="Takeout / To-go">Takeout / To-go</button>
+                  <button type="button" class="settings-chip" data-value="Pickup">Pickup</button>
+                  <button type="button" class="settings-chip" data-value="Delivery">Delivery</button>
+                </div>
+              </div>
+              <div class="settings-field field-full">
+                <label class="settings-label">Accepted Payment Types <span class="settings-label-note">(select accepted payment methods)</span></label>
+                <div class="settings-chip-row" id="ssPaymentTypes">
+                  <button type="button" class="settings-chip" data-value="Cash">Cash</button>
+                  <button type="button" class="settings-chip" data-value="Card">Card (Credit/Debit)</button>
+                  <button type="button" class="settings-chip" data-value="Gift Cheque">Gift Cheque</button>
+                  <button type="button" class="settings-chip" data-value="GCash">GCash</button>
+                  <button type="button" class="settings-chip" data-value="PayMaya">PayMaya</button>
+                  <button type="button" class="settings-chip" data-value="ShopeePay">ShopeePay</button>
+                  <button type="button" class="settings-chip" data-value="Bank Transfer">Bank Transfer</button>
+                </div>
+              </div>
+            </div>
+            <div class="settings-actions-footer">
+              <button type="submit" class="settings-btn-save" id="btnSaveStoreSettings">
+                {{ icon('check', 16) }}
+                <span>Save Store Settings</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {# ── Pane 2: Receipt & Branch Profile Settings ──────────────────── #}
+      <div class="settings-pane" id="pane-receipt" role="tabpanel">
+        <div class="receipt-designer-split">
+          {# Left Column: Form #}
+          <div class="receipt-form-column">
+            <form id="receiptSettingsForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div>
+                    <h3 class="settings-card-title">{{ icon('file-text', 18) }} BIR Credentials &amp; Branch Profile</h3>
+                    <p class="settings-card-desc">Official BIR registration parameters printed on customer receipts.</p>
+                  </div>
+                </div>
+                <div class="settings-form-grid">
+                  <div class="settings-field field-full">
+                    <label class="settings-label" for="cfgReceiptStoreName">Business Name / Trade Name</label>
+                    <input type="text" class="settings-input" id="cfgReceiptStoreName" name="store_name" placeholder="e.g. SAVORE KITCHEN CORP" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgTin">Tax Identification No. (TIN)</label>
+                    <input type="text" class="settings-input" id="cfgTin" name="tin" placeholder="e.g. VAT REG. TIN 681-242-294-00000" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgPtu">Permit to Use (PTU No.)</label>
+                    <input type="text" class="settings-input" id="cfgPtu" name="ptu_no" placeholder="e.g. PTU NO: FP032026-088-0596274-000000" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgPtuIssued">PTU Date Issued</label>
+                    <input type="text" class="settings-input" id="cfgPtuIssued" name="ptu_date_issued" placeholder="e.g. DATE ISSUED: 03/26/2026" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgBranchName">Stall No. / Branch Name</label>
+                    <input type="text" class="settings-input" id="cfgBranchName" name="branch_name" placeholder="e.g. LEVEL 1 STALL #126 ROBINSONS NORTH" autocomplete="off">
+                  </div>
+                  <div class="settings-field field-full">
+                    <label class="settings-label" for="cfgStoreAddress">Store Address</label>
+                    <input type="text" class="settings-input" id="cfgStoreAddress" name="store_location" placeholder="e.g. BRGY 91 ABUCAY, TACLOBAN CITY, LEYTE" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgMin">Machine Identification No. (MIN)</label>
+                    <input type="text" class="settings-input" id="cfgMin" name="min" placeholder="e.g. MIN - 2603271052400600" autocomplete="off">
+                  </div>
+                  <div class="settings-field">
+                    <label class="settings-label" for="cfgSerial">POS Serial Number (SN)</label>
+                    <input type="text" class="settings-input" id="cfgSerial" name="serial_number" placeholder="e.g. SN - 1F250421014035" autocomplete="off">
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-card">
+                <div class="settings-card-header">
+                  <div>
+                    <h3 class="settings-card-title">{{ icon('receipt', 18) }} Thank You Message &amp; Receipt Footer</h3>
+                    <p class="settings-card-desc">Closing message printed at the bottom of customer slips.</p>
+                  </div>
+                </div>
+                <div class="settings-field field-full">
+                  <label class="settings-label" for="cfgFooterLines">Thank You / Closing Message</label>
+                  <textarea class="settings-textarea" id="cfgFooterLines" name="footer_lines" rows="3" placeholder="e.g. Thank you for dining with us! Please come again."></textarea>
+                </div>
+              </div>
+
+              <div class="settings-actions-footer">
+                <button type="submit" class="settings-btn-save" id="btnSaveReceiptSettings">
+                  {{ icon('check', 16) }}
+                  <span>Save Receipt &amp; Header Settings</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {# Right Column: Preview #}
+          <aside class="receipt-preview-wrap" aria-label="Receipt Preview">
+            <div class="receipt-preview-header">
+              <div class="receipt-preview-title">
+                {{ icon('receipt', 18) }}
+                <span>Receipt Template Preview</span>
+              </div>
+            </div>
+
+            <div class="receipt-paper">
+              <div class="receipt-paper-header">
+                <div class="receipt-paper-store" id="prevStoreName">SAVORE KITCHEN CORP</div>
+                <div id="prevTin" style="font-size: 0.68rem; margin-top: 0.15rem;">VAT REG. TIN 681-242-294-00000</div>
+                <div id="prevPtu" style="font-size: 0.68rem;">PTU NO: FP032026-088-0596274-000000</div>
+                <div id="prevPtuIssued" style="font-size: 0.68rem;">DATE ISSUED: 03/26/2026</div>
+                <div id="prevBranchName" style="font-size: 0.72rem; color: #4b5563; font-weight: 600; margin-top: 0.15rem;">LEVEL 1 STALL #126 ROBINSONS NORTH</div>
+                <div id="prevAddress" style="font-size: 0.68rem; color: #6b7280;">BRGY 91 ABUCAY TACLOBAN CITY</div>
+                <div id="prevMin" style="font-size: 0.68rem; margin-top: 0.15rem;">MIN: 2603271052400600</div>
+                <div id="prevSerial" style="font-size: 0.68rem;">SN: 1F250421014035</div>
+              </div>
+              <hr class="receipt-paper-divider">
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                <span>OR #: 20260903-0001</span>
+                <span>Table: 04</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #6b7280;">
+                <span>Cashier: Admin</span>
+                <span>Dine-In</span>
+              </div>
+              <hr class="receipt-paper-divider">
+              <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                <span>1x Truffle Burger</span>
+                <span>&#8369;350.00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                <span>2x Iced Americano</span>
+                <span>&#8369;240.00</span>
+              </div>
+              <hr class="receipt-paper-divider">
+              <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 0.85rem;">
+                <span>TOTAL AMOUNT:</span>
+                <span>&#8369;590.00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-top: 0.2rem;">
+                <span>CASH TENDERED:</span>
+                <span>&#8369;1,000.00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                <span>CHANGE:</span>
+                <span>&#8369;410.00</span>
+              </div>
+              <hr class="receipt-paper-divider">
+              <div class="receipt-paper-footer">
+                <div id="prevFooterMsg" style="font-weight: 600;">Thank you for dining with us!</div>
+                <div style="font-size: 0.62rem; color: #9ca3af; margin-top: 0.35rem;">THIS SERVES AS AN OFFICIAL RECEIPT</div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      {# ── Pane 3: Visual Theme Selection ──────────────────────────────────── #}
+      <div class="settings-pane" id="pane-theme" role="tabpanel">
+        <div class="settings-card">
+          <div class="settings-card-header">
+            <div>
+              <h3 class="settings-card-title">{{ icon('sun', 18) }} Appearance &amp; Visual Theme</h3>
+              <p class="settings-card-desc">Choose your preferred visual theme. Your choice is saved and applies instantly system-wide.</p>
+            </div>
+          </div>
+          <div class="theme-selection-grid">
+            <button type="button" class="theme-card" id="themeCardLight" data-theme-choice="light">
+              <div class="theme-card-preview preview-light">
+                <div class="theme-preview-topbar"></div>
+                <div class="theme-preview-sidebar"></div>
+                <div class="theme-preview-content">
+                  <div class="theme-preview-box"></div>
+                  <div class="theme-preview-box"></div>
+                </div>
+              </div>
+              <div class="theme-card-info">
+                <span class="theme-card-title">{{ icon('sun', 16) }} Light Theme</span>
+                <span class="theme-card-badge">{{ icon('check', 14) }} Active</span>
+              </div>
+            </button>
+
+            <button type="button" class="theme-card" id="themeCardDark" data-theme-choice="dark">
+              <div class="theme-card-preview preview-dark">
+                <div class="theme-preview-topbar"></div>
+                <div class="theme-preview-sidebar"></div>
+                <div class="theme-preview-content">
+                  <div class="theme-preview-box"></div>
+                  <div class="theme-preview-box"></div>
+                </div>
+              </div>
+              <div class="theme-card-info">
+                <span class="theme-card-title">{{ icon('moon', 16) }} Dark Theme</span>
+                <span class="theme-card-badge">{{ icon('check', 14) }} Active</span>
+              </div>
+            </button>
+          </div>
+          <div class="settings-note" style="margin-top: 1.5rem;">
+            {{ icon('info', 16) }}
+            <span>Switching themes applies immediately across the administrative portal and reports.</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+{% endblock %}
