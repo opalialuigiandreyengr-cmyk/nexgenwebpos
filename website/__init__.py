@@ -56,6 +56,19 @@ def create_app():
         db_path = os.path.join(instance_dir, 'pos.db')
         app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
         logger.info(f"Connected to Local SQLite Database: {db_path}")
+        from sqlalchemy import event
+        from sqlalchemy.engine import Engine
+        @event.listens_for(Engine, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            try:
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA journal_mode=WAL")
+                cursor.execute("PRAGMA synchronous=NORMAL")
+                cursor.execute("PRAGMA busy_timeout=10000")
+                cursor.close()
+            except Exception:
+                pass
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
@@ -100,6 +113,8 @@ def create_app():
     def enforce_web_role_restriction():
         from flask_login import current_user, logout_user
         from .permissions import ROLE_ADMIN, ROLE_MANAGER, ROLE_BIR_GUEST
+        if request.path.startswith("/api/sync"):
+            return None
         if current_user and current_user.is_authenticated:
             ep = request.endpoint or ""
             if ep.startswith("web_assets.") or ep == "static" or ep == "auth.logout" or ep == "auth.login":
@@ -113,6 +128,9 @@ def create_app():
     @app.before_request
     def validate_csrf_token():
         if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
+            return None
+
+        if request.path.startswith("/api/sync"):
             return None
 
         exempt_endpoints = {
@@ -147,10 +165,12 @@ def create_app():
     from .auth import auth as auth_blueprint
     from .main import main as main_blueprint
     from .sales_reports import sales_reports as sales_reports_blueprint
+    from .sync_api import sync_api as sync_api_blueprint
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(sales_reports_blueprint)
+    app.register_blueprint(sync_api_blueprint)
 
     # Initialize tables and seed default admin if needed
     with app.app_context():

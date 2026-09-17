@@ -183,6 +183,56 @@ CREATE TABLE IF NOT EXISTS public.rlc_settings (
     transfer_time TEXT
 );
 
+-- 12. Z-Readings table
+CREATE TABLE IF NOT EXISTS public.z_reading (
+    id BIGINT PRIMARY KEY,
+    z_counter INT NOT NULL,
+    reset_counter INT NOT NULL DEFAULT 0,
+    previous_ngrt NUMERIC(14,2) NOT NULL DEFAULT 0.00,
+    current_ngrt NUMERIC(14,2) NOT NULL DEFAULT 0.00,
+    date DATE NOT NULL,
+    timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 13. Gift Certificates table
+CREATE TABLE IF NOT EXISTS public.gift_certificate (
+    id BIGINT PRIMARY KEY,
+    code TEXT UNIQUE NOT NULL,
+    product_id BIGINT,
+    is_used BOOLEAN DEFAULT FALSE,
+    timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 14. Restaurant Tables table
+CREATE TABLE IF NOT EXISTS public.restaurant_tables (
+    id BIGINT PRIMARY KEY,
+    table_number TEXT NOT NULL,
+    table_type TEXT NOT NULL,
+    room_section TEXT NOT NULL DEFAULT 'Main',
+    status TEXT DEFAULT 'available',
+    x_pos INT DEFAULT 50,
+    y_pos INT DEFAULT 50,
+    rotation INT DEFAULT 0
+);
+
+-- 15. Table Zones table
+CREATE TABLE IF NOT EXISTS public.table_zones (
+    id BIGINT PRIMARY KEY,
+    name TEXT NOT NULL,
+    kind TEXT NOT NULL DEFAULT 'floor',
+    sort_order INT NOT NULL DEFAULT 0
+);
+
+-- 16. Floor Boxes table
+CREATE TABLE IF NOT EXISTS public.floor_boxes (
+    id BIGINT PRIMARY KEY,
+    zone_name TEXT NOT NULL DEFAULT 'Main',
+    x_pos INT NOT NULL DEFAULT 30,
+    y_pos INT NOT NULL DEFAULT 30,
+    width INT NOT NULL DEFAULT 180,
+    height INT NOT NULL DEFAULT 120
+);
+
 -- ============================================================================
 -- Indexes for Ultra-Fast Query Performance
 -- ============================================================================
