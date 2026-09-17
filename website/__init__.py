@@ -53,9 +53,27 @@ def create_app():
         }
         logger.info(f"Connected to Cloud PostgreSQL Database URI: {db_uri.split('@')[-1] if '@' in db_uri else 'PostgreSQL'}")
     else:
-        db_path = os.path.join(instance_dir, 'pos.db')
+        db_filename = os.environ.get('DB_NAME', '').strip()
+        if not db_filename:
+            client_id = os.environ.get('CLIENT_ID', '').strip().lower().replace(' ', '_').replace('-', '_')
+            if client_id:
+                db_filename = f"{client_id}_pos.db"
+            else:
+                db_filename = 'pos.db'
+
+        db_path = os.path.join(instance_dir, db_filename)
+        # Auto-migrate legacy pos.db if it exists and client-specific db does not yet
+        legacy_path = os.path.join(instance_dir, 'pos.db')
+        if not os.path.exists(db_path) and os.path.exists(legacy_path) and db_filename != 'pos.db':
+            try:
+                import shutil
+                shutil.copy2(legacy_path, db_path)
+                logger.info(f"Preserved existing data by copying legacy pos.db to {db_filename}")
+            except Exception as e:
+                logger.warning(f"Could not copy legacy pos.db to {db_filename}: {e}")
+
         app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-        logger.info(f"Connected to Local SQLite Database: {db_path}")
+        logger.info(f"Connected to Local SQLite Database: {db_path} (DB: {db_filename})")
         from sqlalchemy import event
         from sqlalchemy.engine import Engine
         @event.listens_for(Engine, "connect")
