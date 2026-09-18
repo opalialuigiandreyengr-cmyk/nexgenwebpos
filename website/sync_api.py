@@ -100,6 +100,9 @@ def sync_ping():
         "success": True,
         "status": "ready",
         "service": "nexgenwebpos-sync",
+        "orders_count": Order.query.count(),
+        "products_count": Product.query.count(),
+        "users_count": User.query.count(),
         "server_time": datetime.utcnow().isoformat()
     })
 
