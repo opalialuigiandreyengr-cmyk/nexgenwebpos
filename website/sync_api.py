@@ -142,11 +142,16 @@ def sync_push():
         try:
             if action == 'DELETE':
                 model_map = {
-                    'orders': Order,
-                    'users': User,
-                    'products': Product,
-                    'categories': Category,
-                    'receipt_settings': ReceiptSettings
+                    'orders': Order, 'order': Order,
+                    'users': User, 'user': User,
+                    'products': Product, 'product': Product,
+                    'categories': Category, 'category': Category,
+                    'receipt_settings': ReceiptSettings,
+                    'order_items': OrderItem, 'order_item': OrderItem,
+                    'settlements': Settlement, 'settlement': Settlement,
+                    'z_reading': ZReading, 'z_readings': ZReading,
+                    'order_audit_logs': OrderAuditLog, 'order_audit_log': OrderAuditLog,
+                    'activity_logs': ActivityLog, 'activity_log': ActivityLog,
                 }
                 model_cls = model_map.get(table_name)
                 if model_cls and record_id:
@@ -156,7 +161,7 @@ def sync_push():
                 processed_count += 1
                 continue
 
-            if table_name == 'orders':
+            if table_name in ('orders', 'order'):
                 items_payload = payload.pop('items', [])
                 settlement_payload = payload.pop('settlement', None)
 
@@ -174,28 +179,34 @@ def sync_push():
                     settlement_payload['order_id'] = order_inst.id
                     _upsert_record(Settlement, settlement_payload, primary_key='id')
 
-            elif table_name == 'users':
+            elif table_name in ('users', 'user'):
                 _upsert_record(User, payload, primary_key='id', unique_key='username')
 
-            elif table_name == 'products':
+            elif table_name in ('products', 'product'):
                 _upsert_record(Product, payload, primary_key='id', unique_key='name')
 
-            elif table_name == 'categories':
+            elif table_name in ('categories', 'category'):
                 _upsert_record(Category, payload, primary_key='id', unique_key='name')
 
-            elif table_name == 'activity_logs':
+            elif table_name in ('activity_logs', 'activity_log'):
                 if not payload.get('action'):
                     payload['action'] = payload.get('event_type') or 'Activity'
                 _upsert_record(ActivityLog, payload, primary_key='id')
 
-            elif table_name == 'receipt_settings':
+            elif table_name in ('receipt_settings', 'receipt_setting'):
                 _upsert_record(ReceiptSettings, payload, primary_key='id')
 
-            elif table_name == 'order_audit_logs':
+            elif table_name in ('order_audit_logs', 'order_audit_log'):
                 _upsert_record(OrderAuditLog, payload, primary_key='id')
 
-            elif table_name == 'z_reading':
+            elif table_name in ('z_reading', 'z_readings'):
                 _upsert_record(ZReading, payload, primary_key='id')
+
+            elif table_name in ('order_items', 'order_item'):
+                _upsert_record(OrderItem, payload, primary_key='id')
+
+            elif table_name in ('settlements', 'settlement'):
+                _upsert_record(Settlement, payload, primary_key='id')
 
             processed_count += 1
 
