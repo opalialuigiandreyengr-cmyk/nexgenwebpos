@@ -104,6 +104,22 @@ def sync_ping():
     })
 
 
+@sync_api.route('/recover', methods=['GET', 'POST'])
+def sync_recover():
+    """Recover database from stale locks or WAL corruption on PythonAnywhere NFS."""
+    try:
+        from sqlalchemy import text
+        db.session.rollback()
+        db.session.execute(text("PRAGMA journal_mode=DELETE;"))
+        db.session.execute(text("PRAGMA busy_timeout=15000;"))
+        db.session.commit()
+        return jsonify({"success": True, "message": "Database recovered to DELETE mode and locks cleared."})
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(exc)}), 500
+
+
+
 @sync_api.route('/push', methods=['POST'])
 @require_sync_auth
 def sync_push():
